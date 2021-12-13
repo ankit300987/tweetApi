@@ -1,5 +1,4 @@
-﻿using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using System.Collections.Generic;
 
@@ -32,37 +31,37 @@ namespace tweetApi.Controllers
 
         [HttpPost]
         [Route("/api/v1.0/tweets/{username}/add")]
-        public IActionResult CreateTweet(string username, [FromBody] Tweet tweet)
+        public IActionResult CreateTweet([FromBody] Tweet tweet)
         {
-            return Ok($"Creating post {tweet} for user {username}" );
+            return Ok($"Creating post {tweet} for user {tweet.UserName}");
         }
 
         [HttpPut]
         [Route("/api/v1.0/tweets/{username}/update/{id}")]
-        public IActionResult UpdateTweet(string username,int id)
+        public IActionResult UpdateTweet(Tweet tweet)
         {
-            return Ok($"Updating post with tweet id {id} for user {username}");
+            return Ok($"Updating post with tweet id {tweet.Id} for user {tweet.UserName}");
         }
 
         [HttpDelete]
         [Route("/api/v1.0/tweets/{username}/delete/{id}")]
-        public IActionResult DeleteTweet(string username, int id)
+        public IActionResult DeleteTweet(Tweet tweet)
         {
-            return Ok($"Deleting post with tweet id {id} for user {username}");
+            return Ok($"Deleting post with tweet id {tweet.Id} for user {tweet.UserName}");
         }
 
         [HttpPut]
         [Route("/api/v1.0/tweets/{username}/like/{id}")]
-        public IActionResult LikeTweet(string username, int id)
+        public IActionResult LikeTweet(Tweet tweet)
         {
-            return Ok($"Like post with tweet id {id} for user {username}");
+            return Ok($"Like post with tweet id {tweet.Id} for user {tweet.UserName}");
         }
 
         [HttpPost]
         [Route("/api/v1.0/tweets/{username}/reply/{id}")]
-        public IActionResult ReplyTweet(string username, [FromBody] Tweet tweet)
+        public IActionResult ReplyTweet([FromBody] Tweet tweet)
         {
-            return Ok($"Replying post {tweet} for user {username}");
+            return Ok($"Replying post {tweet} for user {tweet.UserName}");
         }
     }
 }
