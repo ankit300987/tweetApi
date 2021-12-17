@@ -1,8 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
 
-namespace tweetApi
+namespace Core.Models
 {
     public class Tweet
     {
@@ -19,6 +22,5 @@ namespace tweetApi
         [Required]
         public string UserName { get; set; }
         public IEnumerable<User> LikesBy { get; set; }
-
     }
 }

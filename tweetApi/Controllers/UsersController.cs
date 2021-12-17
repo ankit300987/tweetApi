@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Core.Models;
+using Microsoft.AspNetCore.Mvc;
 using tweetApi.Filters;
 
 namespace tweetApi.Controllers
