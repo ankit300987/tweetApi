@@ -1,6 +1,5 @@
 ﻿using Core.Models;
 using Microsoft.AspNetCore.Mvc;
-using tweetApi.Filters;
 
 namespace tweetApi.Controllers
 {
@@ -16,7 +15,6 @@ namespace tweetApi.Controllers
 
         [HttpPost]
         [Route("/api/v1.0/tweets/register")]
-        [User_PasswordConfirmPasswordSame]
         public IActionResult RegisterUser([FromBody] User user)
         {
             return Ok($"Registering a new user with email id {user.EmailId}");

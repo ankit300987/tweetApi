@@ -1,14 +1,12 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using Core.Validation;
 using System.ComponentModel.DataAnnotations;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using System.Text.Json.Serialization;
 
 namespace Core.Models
 {
     public class User
     {
+        [JsonIgnore]
         public int Id { get; set; }
         [Required]
         public string FirstName { get; set; }
@@ -22,7 +20,13 @@ namespace Core.Models
         [Required]
         public string Password { get; set; }
         [Required]
+        [PasswordConfirmPasswordSameValidation]
         public string ConfirmPassword { get; set; }
         public string Image { get; set; }
+
+        public bool ValidationPasswordConfirmPasswordAreSame()
+        {
+            return Password == ConfirmPassword;
+        }
     }
 }
