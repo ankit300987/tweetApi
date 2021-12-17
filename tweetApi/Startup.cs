@@ -30,6 +30,9 @@ namespace tweetApi
             {
                 c.SwaggerDoc("v1", new OpenApiInfo { Title = "tweetApi", Version = "v1" });
             });
+
+            services.AddScoped<IUserRepository, UserInMemoryRepository>();
+
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
