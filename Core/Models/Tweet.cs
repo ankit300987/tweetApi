@@ -3,7 +3,6 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
-using System.Text.Json.Serialization;
 
 namespace Core.Models
 {
@@ -26,7 +25,7 @@ namespace Core.Models
 
         public bool UserCannotLikeOwnTweet()
         {
-            return !LikesBy.Where( x=> x == UserName ).Any();
+            return !LikesBy.Where(x => x == UserName).Any();
         }
     }
 }

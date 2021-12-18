@@ -1,5 +1,4 @@
 ﻿using Core.Models;
-using DataSource;
 using DataSource.Repository;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
@@ -31,9 +30,9 @@ namespace tweetApi.Controllers
                 var replyTweets = tweets.Where(x => x.ParentId.HasValue && x.ParentId != 0).ToList();
                 foreach (var tweet in tweets)
                 {
-                    var replyTweet = replyTweets.Where(x=> x.ParentId == tweet.Id).ToList();
+                    var replyTweet = replyTweets.Where(x => x.ParentId == tweet.Id).ToList();
                     tweet.Reply = replyTweet;
-                }   
+                }
                 var viewTweets = tweets.Where(t => t.ParentId.GetValueOrDefault() == 0).ToList();
                 Logger.LogInformation("Getting All tweets");
                 return Ok(viewTweets);
@@ -120,7 +119,7 @@ namespace tweetApi.Controllers
 
         [HttpDelete]
         [Route("/api/v1.0/tweets/{username}/delete/{id}")]
-        public async Task<IActionResult> DeleteTweetAsync(string username,int id)
+        public async Task<IActionResult> DeleteTweetAsync(string username, int id)
         {
             try
             {
@@ -150,7 +149,7 @@ namespace tweetApi.Controllers
         /// <returns></returns>
         [HttpPut]
         [Route("/api/v1.0/tweets/{username}/like/{id}")]
-        public async Task<IActionResult> LikeTweetAsync([FromRoute]string username, [FromRoute]int id)
+        public async Task<IActionResult> LikeTweetAsync([FromRoute] string username, [FromRoute] int id)
         {
             try
             {
@@ -161,13 +160,13 @@ namespace tweetApi.Controllers
                     return NotFound();
                 }
                 if (username.ToLower() == searchedTweet.UserName?.ToLower()) return BadRequest("Like User and Tweet user can not be same");
-                
-                List<string> likesBy = searchedTweet.LikesBy?.ToList()?? new List<string>();
+
+                List<string> likesBy = searchedTweet.LikesBy?.ToList() ?? new List<string>();
                 if (!likesBy.Where(x => x == username).Any())
                     likesBy.Add(username);
                 else
                     likesBy.Remove(username);
-                  
+
 
                 searchedTweet.LikesBy = likesBy;
                 await TweetRepository.UpdateTweetWithNewDataAsync(searchedTweet);
@@ -202,10 +201,10 @@ namespace tweetApi.Controllers
                 }
                 tweet.ParentId = searchedTweet.Id;
                 Tweet newtweet = await TweetRepository.CreateTweetAsync(tweet);
-                var reply =  searchedTweet.Reply?.ToList() ?? new List<Tweet>();
+                var reply = searchedTweet.Reply?.ToList() ?? new List<Tweet>();
                 reply.Add(newtweet);
                 searchedTweet.Reply = reply;
-                await TweetRepository.UpdateTweetWithNewDataAsync(searchedTweet); 
+                await TweetRepository.UpdateTweetWithNewDataAsync(searchedTweet);
                 Logger.LogInformation($"Post a reply tweet for user {username}");
                 return Ok($"Replying post {tweet.Id} for user {username}");
             }

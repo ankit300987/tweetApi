@@ -17,7 +17,7 @@ namespace DataSource
             this.db = db;
         }
 
-        public async Task<Tweet>  CreateTweetAsync(Tweet tweet)
+        public async Task<Tweet> CreateTweetAsync(Tweet tweet)
         {
             if (tweet == null) throw new ArgumentNullException(nameof(tweet), "Tweet is null");
             await db.Tweets.AddAsync(tweet);

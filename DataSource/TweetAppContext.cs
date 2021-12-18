@@ -3,8 +3,6 @@ using DataSource.Converter;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
-using System.Threading;
-using System.Threading.Tasks;
 
 namespace DataSource
 {
@@ -23,7 +21,7 @@ namespace DataSource
             var listValueConverter = new ListStringToStringConverter();
 
             modelBuilder.Entity<Tweet>()
-                .Property(t=> t.LikesBy)
+                .Property(t => t.LikesBy)
                 .HasConversion(listValueConverter);
 
 
