@@ -28,8 +28,15 @@ namespace tweetApi.Controllers
             try
             {
                 var tweets = await TweetRepository.GetAllTweetAsync();
+                var replyTweets = tweets.Where(x => x.ParentId.HasValue && x.ParentId != 0).ToList();
+                foreach (var tweet in tweets)
+                {
+                    var replyTweet = replyTweets.Where(x=> x.ParentId == tweet.Id).ToList();
+                    tweet.Reply = replyTweet;
+                }   
+                var viewTweets = tweets.Where(t => t.ParentId.GetValueOrDefault() == 0).ToList();
                 Logger.LogInformation("Getting All tweets");
-                return Ok(tweets);
+                return Ok(viewTweets);
             }
             catch (Exception ex)
             {
@@ -153,8 +160,15 @@ namespace tweetApi.Controllers
                     Logger.LogWarning($"Tweet with tweet id {id} was not found");
                     return NotFound();
                 }
-                List<string> likesBy = searchedTweet.LikesBy.ToList();
-                likesBy.Add(username);
+                if (username.ToLower() == searchedTweet.UserName?.ToLower()) return BadRequest("Like User and Tweet user can not be same");
+                
+                List<string> likesBy = searchedTweet.LikesBy?.ToList()?? new List<string>();
+                if (!likesBy.Where(x => x == username).Any())
+                    likesBy.Add(username);
+                else
+                    likesBy.Remove(username);
+                  
+
                 searchedTweet.LikesBy = likesBy;
                 await TweetRepository.UpdateTweetWithNewDataAsync(searchedTweet);
                 Logger.LogInformation($"Like post with tweet id {id} for user {username}");
@@ -181,15 +195,19 @@ namespace tweetApi.Controllers
             try
             {
                 Tweet searchedTweet = await TweetRepository.SearchTweetByIdAsync(id);
-                if (searchedTweet == null || tweet?.UserName != username)
+                if (searchedTweet == null)
                 {
                     Logger.LogWarning($"Tweet with tweet id {id} was not found for user {username}");
                     return NotFound();
                 }
-                tweet.ParentId = id;
-                Tweet newTweet = await TweetRepository.CreateTweetAsync(tweet);
-                Logger.LogInformation($"Post a reply tweet for user {newTweet.UserName}");
-                return Ok($"Replying post {newTweet} for user {newTweet.UserName}");
+                tweet.ParentId = searchedTweet.Id;
+                Tweet newtweet = await TweetRepository.CreateTweetAsync(tweet);
+                var reply =  searchedTweet.Reply?.ToList() ?? new List<Tweet>();
+                reply.Add(newtweet);
+                searchedTweet.Reply = reply;
+                await TweetRepository.UpdateTweetWithNewDataAsync(searchedTweet); 
+                Logger.LogInformation($"Post a reply tweet for user {username}");
+                return Ok($"Replying post {tweet.Id} for user {username}");
             }
             catch (Exception ex)
             {
