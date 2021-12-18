@@ -1,4 +1,5 @@
 ﻿using Core.Models;
+using DataSource.Converter;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
@@ -17,8 +18,11 @@ namespace DataSource
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
+            var listValueConverter = new ListStringToStringConverter();
+
             modelBuilder.Entity<Tweet>()
-                .HasMany(t => t.LikesBy);
+                .Property(t=> t.LikesBy)
+                .HasConversion(listValueConverter);
 
 
             ///Seeding
@@ -28,7 +32,7 @@ namespace DataSource
                 new User { Id = 2, FirstName = "Test Second User ", LastName = "Last Name", EmailId = "test2@test.com", UserName = "testUser2", Password = "Test", ConfirmPassword = "Test" }
                 );
             modelBuilder.Entity<Tweet>().HasData(
-                    new Tweet { Id = 1, UserName = "testUser", LikesBy = new List<User>(), Message = "Hello Seeded Data ", Name = "Test User Last Name", ParentId = null, TimeStamp = DateTime.Now }
+                    new Tweet { Id = 1, UserName = "testUser", LikesBy = new List<string>(), Message = "Hello Seeded Data ", Name = "Test User Last Name", ParentId = null, TimeStamp = DateTime.Now }
                 );
         }
     }

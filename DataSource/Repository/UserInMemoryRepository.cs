@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 
-namespace DataSource
+namespace DataSource.Repository
 {
     public class UserInMemoryRepository : IUserRepository
     {

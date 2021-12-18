@@ -1,13 +1,14 @@
-﻿using System;
+﻿using Core.Validation;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
+using System.Linq;
 using System.Text.Json.Serialization;
 
 namespace Core.Models
 {
     public class Tweet
     {
-        [JsonIgnore]
         public int Id { get; set; }
         [Required]
         [MaxLength(144)]
@@ -20,6 +21,12 @@ namespace Core.Models
         public int? ParentId { get; set; }
         [Required]
         public string UserName { get; set; }
-        public IEnumerable<User> LikesBy { get; set; }
+        [Tweet_UserCannotLikeOwnTweetValidation]
+        public IEnumerable<string> LikesBy { get; set; }
+
+        public bool UserCannotLikeOwnTweet()
+        {
+            return !LikesBy.Where( x=> x == UserName ).Any();
+        }
     }
 }

@@ -1,5 +1,5 @@
 ﻿using Core.Models;
-using DataSource;
+using DataSource.Repository;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using System;
@@ -55,7 +55,7 @@ namespace tweetApi.Controllers
 
         [HttpPost]
         [Route("/api/v1.0/tweets/login")]
-        public IActionResult login([FromBody] Credential userdata)
+        public IActionResult Login([FromBody] Credential userdata)
         {
             return Ok($"Login with the user emailid {userdata.EmailId} ");
         }
@@ -78,7 +78,7 @@ namespace tweetApi.Controllers
 
         [HttpGet]
         [Route("/api/v1.0/tweets/{username}/forgot")]
-        public IActionResult forgotPassword(string username)
+        public IActionResult ForgotPassword(string username)
         {
             return Ok($"Resetting password for the user {username}");
         }

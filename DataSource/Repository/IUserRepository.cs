@@ -1,7 +1,7 @@
 ﻿using Core.Models;
 using System.Collections.Generic;
 
-namespace DataSource
+namespace DataSource.Repository
 {
     public interface IUserRepository
     {

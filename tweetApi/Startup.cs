@@ -1,4 +1,5 @@
 using DataSource;
+using DataSource.Repository;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.EntityFrameworkCore;
@@ -32,6 +33,7 @@ namespace tweetApi
             });
 
             services.AddScoped<IUserRepository, UserInMemoryRepository>();
+            services.AddScoped<ITweetRepository, TweetInMemoryRepository>();
 
         }
 
