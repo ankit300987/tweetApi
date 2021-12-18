@@ -3,6 +3,7 @@ using DataSource.Repository;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using System;
+using System.Threading.Tasks;
 
 namespace tweetApi.Controllers
 {
@@ -19,12 +20,12 @@ namespace tweetApi.Controllers
         }
         [HttpGet]
         [Route("/api/v1.0/tweets/users/all")]
-        public IActionResult GetUsers()
+        public async Task<IActionResult> GetUsers()
         {
             try
             {
 
-                var users = userRepository.GetAllUsers();
+                var users = await userRepository.GetAllUsersAsyc();
                 Logger.LogInformation($"Getting all the users from the repository");
                 return Ok(users);
             }
@@ -37,11 +38,11 @@ namespace tweetApi.Controllers
 
         [HttpPost]
         [Route("/api/v1.0/tweets/register")]
-        public IActionResult RegisterUser([FromBody] User user)
+        public async Task<IActionResult> RegisterUser([FromBody] User user)
         {
             try
             {
-                string msg = userRepository.RegisterUser(user);
+                string msg = await userRepository.RegisterUserAsync(user);
                 if (string.IsNullOrEmpty(msg))
                     return Ok($"User with username {user.UserName} created");
                 return BadRequest(msg);
@@ -55,18 +56,18 @@ namespace tweetApi.Controllers
 
         [HttpPost]
         [Route("/api/v1.0/tweets/login")]
-        public IActionResult Login([FromBody] Credential userdata)
+        public async Task<IActionResult> LoginAsync([FromBody] Credential userdata)
         {
-            return Ok($"Login with the user emailid {userdata.EmailId} ");
+            return await Task.FromResult(Ok($"Login with the user emailid {userdata.EmailId} "));
         }
 
         [HttpGet]
         [Route("/api/v1.0/tweets/users/search/{username}/")]
-        public IActionResult SearchUser(string username)
+        public async Task<IActionResult> SearchUserAsync(string username)
         {
             try
             {
-                User user = userRepository.SearchUser(username);
+                User user = await userRepository.SearchUserAsync(username);
                 return user != null ? Ok(user) : NotFound($"User with username {username} could not be found");
             }
             catch (Exception ex)
@@ -78,18 +79,18 @@ namespace tweetApi.Controllers
 
         [HttpGet]
         [Route("/api/v1.0/tweets/{username}/forgot")]
-        public IActionResult ForgotPassword(string username)
+        public async Task<IActionResult> ForgotPasswordAsync(string username)
         {
-            return Ok($"Resetting password for the user {username}");
+            return await Task.FromResult(Ok($"Resetting password for the user {username}"));
         }
 
         [HttpGet]
         [Route("/api/v1.0/tweets/users/search/{id}/")]
-        public IActionResult SearchUserById(int id)
+        public async Task<IActionResult> SearchUserByIdAsync(int id)
         {
             try
             {
-                User user = userRepository.GetUserById(id);
+                User user = await userRepository.GetUserByIdAsync(id);
                 return user != null ? Ok(user) : NotFound($"User with id {id} could not be found");
             }
             catch (Exception ex)

@@ -1,13 +1,14 @@
 ﻿using Core.Models;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 
 namespace DataSource.Repository
 {
     public interface IUserRepository
     {
-        IEnumerable<User> GetAllUsers();
-        string RegisterUser(User user);
-        User SearchUser(string username);
-        User GetUserById(int id);
+        public Task<IEnumerable<User>> GetAllUsersAsyc();
+        public Task<string> RegisterUserAsync(User user);
+        public Task<User> SearchUserAsync(string username);
+        public Task<User> GetUserByIdAsync(int id);
     }
 }

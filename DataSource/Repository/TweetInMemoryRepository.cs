@@ -1,8 +1,10 @@
 ﻿using Core.Models;
 using DataSource.Repository;
+using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 
 namespace DataSource
 {
@@ -14,44 +16,45 @@ namespace DataSource
         {
             this.db = db;
         }
-        public Tweet CreateTweet(Tweet tweet)
+
+        public async Task<Tweet>  CreateTweetAsync(Tweet tweet)
         {
             if (tweet == null) throw new ArgumentNullException(nameof(tweet), "Tweet is null");
-            db.Tweets.Add(tweet);
-            db.SaveChanges();
+            await db.Tweets.AddAsync(tweet);
+            await db.SaveChangesAsync();
             return tweet;
         }
 
-        public Tweet DeleteTweet(Tweet tweet)
+        public async Task<Tweet> DeleteTweetAsync(Tweet tweet)
         {
             db.Tweets.Remove(tweet);
-            db.SaveChanges();
+            await db.SaveChangesAsync();
             return tweet;
         }
 
-        public IEnumerable<Tweet> GetAllTweet()
+        public async Task<IEnumerable<Tweet>> GetAllTweetAsync()
         {
-            return db.Tweets.ToList();
+            return await db.Tweets.AsNoTracking().ToListAsync();
         }
 
-        public IEnumerable<Tweet> GetAllTweetFromUser(string username)
+        public async Task<IEnumerable<Tweet>> GetAllTweetFromUserAsync(string username)
         {
-            return username != null? db.Tweets.Where(t => t.UserName == username).ToList(): new List<Tweet>(); 
+            return username != null ? await db.Tweets.Where(t => t.UserName == username).AsNoTracking().ToListAsync() : new List<Tweet>();
         }
 
-        public Tweet SearchTweetById(int id)
+        public async Task<Tweet> SearchTweetByIdAsync(int id)
         {
-            return db.Tweets.Where(t => t.Id == id).FirstOrDefault();
+            return await db.Tweets.Where(t => t.Id == id).AsNoTracking().FirstOrDefaultAsync();
         }
 
-        public void UpdateTweetWithNewData(Tweet tweet)
+        public async Task UpdateTweetWithNewDataAsync(Tweet tweet)
         {
             if (tweet == null) throw new ArgumentNullException(nameof(tweet), "Tweet is null");
             //db.Tweets.Add(tweet);
-            db.Entry(tweet).State = Microsoft.EntityFrameworkCore.EntityState.Modified;
+            db.Entry(tweet).State = EntityState.Modified;
             try
             {
-                db.SaveChanges();
+                await db.SaveChangesAsync();
             }
             catch (Exception)
             {

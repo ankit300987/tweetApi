@@ -9,11 +9,11 @@ namespace DataSource.Repository
 {
     public interface ITweetRepository
     {
-        IEnumerable<Tweet> GetAllTweet();
-        IEnumerable<Tweet> GetAllTweetFromUser(string username);
-        Tweet CreateTweet(Tweet tweet);
-        Tweet SearchTweetById(int id);
-        void UpdateTweetWithNewData(Tweet tweet);
-        Tweet DeleteTweet(Tweet tweet);
+        public Task<Tweet> CreateTweetAsync(Tweet tweet);
+        public Task<Tweet> DeleteTweetAsync(Tweet tweet);
+        public Task<IEnumerable<Tweet>> GetAllTweetAsync();
+        public Task<IEnumerable<Tweet>> GetAllTweetFromUserAsync(string username);
+        public Task<Tweet> SearchTweetByIdAsync(int id);
+        public Task UpdateTweetWithNewDataAsync(Tweet tweet);
     }
 }

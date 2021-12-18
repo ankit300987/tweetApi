@@ -6,6 +6,7 @@ using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 
 namespace tweetApi.Controllers
 {
@@ -22,11 +23,11 @@ namespace tweetApi.Controllers
         }
 
         [HttpGet]
-        public IActionResult All()
+        public async Task<IActionResult> AllAsync()
         {
             try
             {
-                var tweets = TweetRepository.GetAllTweet();
+                var tweets = await TweetRepository.GetAllTweetAsync();
                 Logger.LogInformation("Getting All tweets");
                 return Ok(tweets);
             }
@@ -38,11 +39,11 @@ namespace tweetApi.Controllers
         }
 
         [HttpGet("{username}")]
-        public IActionResult GetTweetsOfUserName(string username)
+        public async Task<IActionResult> GetTweetsOfUserNameAsync(string username)
         {
             try
             {
-                var tweets = TweetRepository.GetAllTweetFromUser(username);
+                var tweets = await TweetRepository.GetAllTweetFromUserAsync(username);
                 Logger.LogInformation("Receiving all tweets of the user " + username);
                 return Ok(tweets);
             }
@@ -55,11 +56,11 @@ namespace tweetApi.Controllers
 
         [HttpPost]
         [Route("/api/v1.0/tweets/{username}/add")]
-        public IActionResult CreateTweet([FromBody] Tweet tweet)
+        public async Task<IActionResult> CreateTweetAsync([FromBody] Tweet tweet)
         {
             try
             {
-                Tweet newtweet = TweetRepository.CreateTweet(tweet);
+                Tweet newtweet = await TweetRepository.CreateTweetAsync(tweet);
                 Logger.LogInformation($"Post a new tweet for user {tweet.UserName}");
                 return Ok($"Creating post {tweet} for user {tweet.UserName}");
             }
@@ -72,11 +73,11 @@ namespace tweetApi.Controllers
 
         [HttpGet]
         [Route("/api/v1.0/tweets/{username}/search/{id}")]
-        public IActionResult SearchTweetById(int id)
+        public async Task<IActionResult> SearchTweetByIdAsync(int id)
         {
             try
             {
-                Tweet tweet = TweetRepository.SearchTweetById(id);
+                Tweet tweet = await TweetRepository.SearchTweetByIdAsync(id);
                 Logger.LogInformation($"Searching Tweet with {id} in the db");
                 return tweet != null ? Ok(tweet) : NotFound($"Tweet with id {id} was not found in the db");
             }
@@ -89,16 +90,16 @@ namespace tweetApi.Controllers
 
         [HttpPut]
         [Route("/api/v1.0/tweets/{username}/update/{id}")]
-        public IActionResult UpdateTweet([FromBody] Tweet tweet, [FromRoute] int id, [FromRoute] string username)
+        public async Task<IActionResult> UpdateTweetAsync([FromBody] Tweet tweet, [FromRoute] int id, [FromRoute] string username)
         {
             try
             {
                 if (id != tweet.Id && username != tweet.UserName) return BadRequest($"Tweet id {id} for the user {username} is not matching with tweets data {tweet.Id} & {tweet.UserName}");
-                var searchedTweet = TweetRepository.SearchTweetById(id);
+                var searchedTweet = await TweetRepository.SearchTweetByIdAsync(id);
 
                 if (searchedTweet == null) return NotFound();
 
-                TweetRepository.UpdateTweetWithNewData(tweet);
+                await TweetRepository.UpdateTweetWithNewDataAsync(tweet);
                 Logger.LogInformation($"Tweet with id {tweet.Id} gets updated");
                 return Ok($"Updating post with id {id} for user {username} while tweet data has {tweet.Id} & {tweet.UserName}");
 
@@ -112,18 +113,18 @@ namespace tweetApi.Controllers
 
         [HttpDelete]
         [Route("/api/v1.0/tweets/{username}/delete/{id}")]
-        public IActionResult DeleteTweet(string username,int id)
+        public async Task<IActionResult> DeleteTweetAsync(string username,int id)
         {
             try
             {
-                Tweet tweet = TweetRepository.SearchTweetById(id);
+                Tweet tweet = await TweetRepository.SearchTweetByIdAsync(id);
                 if (tweet == null || tweet?.UserName != username)
                 {
                     Logger.LogWarning($"Tweet with tweet id {id} was not found for user {username}");
                     return NotFound();
                 }
 
-                Tweet deletedTweet = TweetRepository.DeleteTweet(tweet);
+                Tweet deletedTweet = await TweetRepository.DeleteTweetAsync(tweet);
                 Logger.LogInformation($"Deleting post with tweet id {tweet.Id} for user {tweet.UserName}");
                 return Ok(deletedTweet);
             }
@@ -142,11 +143,11 @@ namespace tweetApi.Controllers
         /// <returns></returns>
         [HttpPut]
         [Route("/api/v1.0/tweets/{username}/like/{id}")]
-        public IActionResult LikeTweet([FromRoute]string username, [FromRoute]int id)
+        public async Task<IActionResult> LikeTweetAsync([FromRoute]string username, [FromRoute]int id)
         {
             try
             {
-                Tweet searchedTweet = TweetRepository.SearchTweetById(id);
+                Tweet searchedTweet = await TweetRepository.SearchTweetByIdAsync(id);
                 if (searchedTweet == null)
                 {
                     Logger.LogWarning($"Tweet with tweet id {id} was not found");
@@ -155,7 +156,7 @@ namespace tweetApi.Controllers
                 List<string> likesBy = searchedTweet.LikesBy.ToList();
                 likesBy.Add(username);
                 searchedTweet.LikesBy = likesBy;
-                TweetRepository.UpdateTweetWithNewData(searchedTweet);
+                await TweetRepository.UpdateTweetWithNewDataAsync(searchedTweet);
                 Logger.LogInformation($"Like post with tweet id {id} for user {username}");
                 return Ok($"Like post with tweet id {id} for user {username}");
             }
@@ -175,18 +176,18 @@ namespace tweetApi.Controllers
         /// <returns></returns>
         [HttpPost]
         [Route("/api/v1.0/tweets/{username}/reply/{id}")]
-        public IActionResult ReplyTweet([FromBody] Tweet tweet, string username, int id)
+        public async Task<IActionResult> ReplyTweetAsync([FromBody] Tweet tweet, string username, int id)
         {
             try
             {
-                Tweet searchedTweet = TweetRepository.SearchTweetById(id);
+                Tweet searchedTweet = await TweetRepository.SearchTweetByIdAsync(id);
                 if (searchedTweet == null || tweet?.UserName != username)
                 {
                     Logger.LogWarning($"Tweet with tweet id {id} was not found for user {username}");
                     return NotFound();
                 }
                 tweet.ParentId = id;
-                Tweet newTweet = TweetRepository.CreateTweet(tweet);
+                Tweet newTweet = await TweetRepository.CreateTweetAsync(tweet);
                 Logger.LogInformation($"Post a reply tweet for user {newTweet.UserName}");
                 return Ok($"Replying post {newTweet} for user {newTweet.UserName}");
             }
