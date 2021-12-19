@@ -44,7 +44,7 @@ namespace tweetApi.Controllers
             {
                 string msg = await userRepository.RegisterUserAsync(user);
                 if (string.IsNullOrEmpty(msg))
-                    return Ok($"User with username {user.UserName} created");
+                    return Ok(user);
                 return BadRequest(msg);
             }
             catch (Exception ex)

@@ -68,7 +68,7 @@ namespace tweetApi.Controllers
             {
                 Tweet newtweet = await TweetRepository.CreateTweetAsync(tweet);
                 Logger.LogInformation($"Post a new tweet for user {tweet.UserName}");
-                return Ok($"Creating post {tweet} for user {tweet.UserName}");
+                return Ok(newtweet);
             }
             catch (Exception ex)
             {
