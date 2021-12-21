@@ -6,9 +6,10 @@ namespace DataSource.Repository
 {
     public interface IUserRepository
     {
-        public Task<IEnumerable<User>> GetAllUsersAsyc();
-        public Task<string> RegisterUserAsync(User user);
-        public Task<User> SearchUserAsync(string username);
-        public Task<User> GetUserByIdAsync(int id);
+        Task<IEnumerable<User>> GetAllUsersAsyc();
+        Task<string> RegisterUserAsync(User user);
+        Task<User> SearchUserAsync(string username);
+        Task<User> GetUserByIdAsync(int id);
+        Task UpdateUserAsync(User user);
     }
 }

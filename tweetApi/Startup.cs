@@ -40,6 +40,7 @@ namespace tweetApi
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env, TweetAppContext tweetAppContext)
         {
+            
             if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();
@@ -48,6 +49,13 @@ namespace tweetApi
             }
             tweetAppContext.Database.EnsureDeleted();
             tweetAppContext.Database.EnsureCreated();
+            app.UseCors(option =>
+            {
+                option.WithOrigins("http://localhost:3000")
+                .AllowAnyMethod()
+                .AllowAnyHeader()
+                .AllowAnyOrigin();
+            });
             app.UseHttpsRedirection();
 
             app.UseRouting();

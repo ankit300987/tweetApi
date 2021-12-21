@@ -38,8 +38,11 @@ namespace WebAPIExecutor
         {
             return await webAPIExecutor.InvokeGetAsync<User>($"/api/v1.0/tweets/users/search/{username}/");
         }
-        ///Todo Implement Forgot password scenario
-        //"/api/v1.0/tweets/{username}/forgot"  get
+
+        public async Task UpdateUserAsync(User user, string username)
+        {
+            await webAPIExecutor.InvokePutAsync($"/api/v1.0/tweets/{username}/forgot ", user);
+        }
 
         public async Task<User> GetUserById(int id)
         {

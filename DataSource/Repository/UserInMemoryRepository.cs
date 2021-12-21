@@ -1,5 +1,6 @@
 ﻿using Core.Models;
 using Microsoft.EntityFrameworkCore;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -13,25 +14,17 @@ namespace DataSource.Repository
         public UserInMemoryRepository(TweetAppContext db)
         {
             this.db = db;
-        }
-        public IEnumerable<User> GetAllUsers()
-        {
-            return db.Users.ToList();
-        }
+        }       
 
         public async Task<IEnumerable<User>> GetAllUsersAsyc()
         {
-            return await db.Users.ToListAsync();
+            return await db.Users.AsNoTracking().ToListAsync();
         }
 
-        public User GetUserById(int id)
-        {
-            return db.Users.Where(x => x.Id == id).FirstOrDefault();
-        }
-
+        
         public async Task<User> GetUserByIdAsync(int id)
         {
-            return await db.Users.Where(x => x.Id == id).FirstOrDefaultAsync();
+            return await db.Users.AsNoTracking().Where(x => x.Id == id).FirstOrDefaultAsync();
         }
 
         public string RegisterUser(User user)
@@ -64,12 +57,27 @@ namespace DataSource.Repository
 
         public User SearchUser(string username)
         {
-            return db.Users.Where(x => x.UserName == username).FirstOrDefault();
+            return db.Users.AsNoTracking().Where(x => x.UserName == username).FirstOrDefault();
         }
 
         public async Task<User> SearchUserAsync(string username)
         {
-            return await db.Users.Where(x => x.UserName == username).FirstOrDefaultAsync();
+            return await db.Users.AsNoTracking().Where(x => x.UserName == username).FirstOrDefaultAsync();
+        }
+
+        public async  Task UpdateUserAsync(User user)
+        {
+            if (user == null) throw new ArgumentNullException(nameof(user), "User is null");
+            //db.Tweets.Add(tweet);
+            db.Entry(user).State = EntityState.Modified;
+            try
+            {
+                await db.SaveChangesAsync();
+            }
+            catch (Exception)
+            {
+                throw;
+            }
         }
     }
 }

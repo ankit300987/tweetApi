@@ -77,10 +77,19 @@ namespace tweetApi.Controllers
             }
         }
 
-        [HttpGet]
+        [HttpPut]
         [Route("/api/v1.0/tweets/{username}/forgot")]
-        public async Task<IActionResult> ForgotPasswordAsync(string username)
+        public async Task<IActionResult> ForgotPasswordAsync(string username, [FromBody] User updatedUser)
         {
+            User user = await userRepository.SearchUserAsync(username);
+            if(user == null)
+            {
+                return NotFound($"User with username {username} could not be found");
+            }
+            if (user.EmailId != updatedUser.EmailId) return BadRequest("Email id of the provided user is not matching");
+            user.Password = updatedUser.Password;
+            user.ConfirmPassword = updatedUser.ConfirmPassword;
+            await userRepository.UpdateUserAsync(user);
             return await Task.FromResult(Ok($"Resetting password for the user {username}"));
         }
 
