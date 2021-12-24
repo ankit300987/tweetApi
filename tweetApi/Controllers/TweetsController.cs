@@ -6,11 +6,13 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using tweetApi.Filters;
 
 namespace tweetApi.Controllers
 {
     [ApiController]
     [Route("api/v1.0/[controller]")]
+    [TokenAuthFilter]
     public class TweetsController : ControllerBase
     {
         private readonly ITweetRepository TweetRepository;

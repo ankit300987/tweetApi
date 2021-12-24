@@ -7,6 +7,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.OpenApi.Models;
+using tweetApi.Auth;
 
 namespace tweetApi
 {
@@ -34,7 +35,7 @@ namespace tweetApi
 
             services.AddScoped<IUserRepository, UserInMemoryRepository>();
             services.AddScoped<ITweetRepository, TweetInMemoryRepository>();
-
+            services.AddSingleton<ICustomTokenManager, JWTTokenManager>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

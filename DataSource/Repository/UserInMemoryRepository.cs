@@ -27,6 +27,14 @@ namespace DataSource.Repository
             return await db.Users.AsNoTracking().Where(x => x.Id == id).FirstOrDefaultAsync();
         }
 
+        public async Task<User> LoginUserAsync(string userName, string password)
+        {
+            User user = await SearchUserAsync(userName);
+            if (user == null) return null;
+            if (user.Password != password) return null;
+            return user;
+        }
+
         public string RegisterUser(User user)
         {
             var searchedUser = SearchUser(user.UserName);

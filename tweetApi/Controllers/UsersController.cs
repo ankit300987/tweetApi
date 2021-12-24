@@ -4,19 +4,24 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using System;
 using System.Threading.Tasks;
+using tweetApi.Auth;
+using tweetApi.Filters;
 
 namespace tweetApi.Controllers
 {
     [ApiController]
+    [TokenAuthFilter]
     public class UsersController : Controller
     {
         private readonly IUserRepository userRepository;
         private readonly ILogger<UsersController> Logger;
+        private readonly ICustomTokenManager customTokenManager;
 
-        public UsersController(IUserRepository userRepository, ILogger<UsersController> Logger)
+        public UsersController(IUserRepository userRepository, ILogger<UsersController> Logger, ICustomTokenManager customTokenManager)
         {
             this.userRepository = userRepository;
             this.Logger = Logger;
+            this.customTokenManager = customTokenManager;
         }
         [HttpGet]
         [Route("/api/v1.0/tweets/users/all")]
@@ -58,7 +63,18 @@ namespace tweetApi.Controllers
         [Route("/api/v1.0/tweets/login")]
         public async Task<IActionResult> LoginAsync([FromBody] Credential userdata)
         {
-            return await Task.FromResult(Ok($"Login with the user emailid {userdata.EmailId} "));
+            try
+            {
+                User user = await userRepository.LoginUserAsync(userdata.UserName, userdata.Password);
+                if (user == null) return NotFound($"User with {userdata.UserName} was not found");
+                var token = await customTokenManager.CreateTokenAsync(user.UserName);
+                return await Task.FromResult(Ok(token));
+            }
+            catch (Exception)
+            {
+
+                return StatusCode(500, "Error on the server while logining in a user"); 
+            }
         }
 
         [HttpGet]
@@ -94,7 +110,7 @@ namespace tweetApi.Controllers
         }
 
         [HttpGet]
-        [Route("/api/v1.0/tweets/users/search/{id}/")]
+        [Route("/api/v1.0/tweets/users/searchbyid/{id}/")]
         public async Task<IActionResult> SearchUserByIdAsync(int id)
         {
             try
